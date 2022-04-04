@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -58,6 +59,18 @@ public class PublicationServiceImpl implements PublicationService {
             publicationDtos = publicationMapper.publicationToDto(publicationRepository.findByPublicationTitleContaining(publicationTitle, pageable).toList());
         }
         return new PageImpl<>(publicationDtos);
+    }
+
+    @Override
+    public ArrayList<PublicationDto> findPaginatedSortedAllPublications(final int pageNo, final int pageSize, final String sortBy)
+    {
+        Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
+
+        List<PublicationDto> publicationDtos;
+        publicationDtos = publicationMapper
+                .publicationToDto(publicationRepository.findAll(paging).toList());
+
+        return new ArrayList<>(publicationDtos);
     }
 
     @Override

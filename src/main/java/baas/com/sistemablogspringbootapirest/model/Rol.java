@@ -4,6 +4,7 @@ import baas.com.sistemablogspringbootapirest.model.status.ModelStatus;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.UUID;
 
 /**
  * Comment class to represent Rol entity
@@ -29,5 +30,15 @@ public class Rol {
     @Column(name = "rol_status")
     @Enumerated(EnumType.ORDINAL)
     private ModelStatus rolStatus;
+
+    /**
+     * Adds fields which are not populated by Rol DTO.
+     * @return
+     */
+    public static Rol buildFromDtoRol(Rol rol){
+        rol.setRolId(UUID.randomUUID().toString());
+        rol.setRolStatus(ModelStatus.ACTIVE);
+        return rol;
+    }
 
 }

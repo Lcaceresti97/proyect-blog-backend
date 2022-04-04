@@ -2,13 +2,17 @@ package baas.com.sistemablogspringbootapirest.controller;
 
 import baas.com.sistemablogspringbootapirest.dto.LoginDto;
 import baas.com.sistemablogspringbootapirest.dto.RegisterDTO;
+import baas.com.sistemablogspringbootapirest.dto.RolDto;
 import baas.com.sistemablogspringbootapirest.dto.UserDto;
 import baas.com.sistemablogspringbootapirest.model.Rol;
 import baas.com.sistemablogspringbootapirest.model.User;
 import baas.com.sistemablogspringbootapirest.repository.RolRepository;
 import baas.com.sistemablogspringbootapirest.repository.UserRepository;
+import baas.com.sistemablogspringbootapirest.response.BaseResponse;
+import baas.com.sistemablogspringbootapirest.response.Response;
 import baas.com.sistemablogspringbootapirest.security.JWTAuthResponseDTO;
 import baas.com.sistemablogspringbootapirest.security.JwtTokenProvider;
+import baas.com.sistemablogspringbootapirest.service.RolService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.Collections;
 
 /**
@@ -49,6 +54,8 @@ public class AuthController {
 
     @Autowired
     private final JwtTokenProvider jwtTokenProvider;
+
+    private final RolService rolService;
 
     @PostMapping("/login")
     public ResponseEntity<JWTAuthResponseDTO> authenticationUser(@RequestBody LoginDto loginDto){
@@ -86,5 +93,14 @@ public class AuthController {
         return  new ResponseEntity<>("Successfully registered user", HttpStatus.OK);
 
     }
+
+    @PostMapping("/rol")
+    public ResponseEntity<? extends Response<RolDto>> savePublication(@RequestBody @Valid RolDto rolDto) {
+        RolDto savedRol = rolService.saveRol(rolDto);
+        BaseResponse<RolDto> publicationBaseResponse = new BaseResponse<>();
+        return publicationBaseResponse
+                .buildResponseEntity(HttpStatus.CREATED, "Publication saved successfully",savedRol);
+    }
+
 
 }

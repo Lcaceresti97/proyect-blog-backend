@@ -23,6 +23,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 /**
  * Controller for Publication entity operations.
@@ -99,6 +100,29 @@ public class PublicationController {
         PageResponseDto<PublicationDto> pageResponseDto = new PageResponseDto<>();
         return pageResponseDto.buildResponseEntity(publicationPage.getSize(), publicationPage.getNumberOfElements(),
                 publicationPage.getTotalPages(), publicationPage.getNumber(), publicationPage.getContent());
+    }
+
+    /**
+     * Get Paginated sorted all publications with given criteria.
+     * @param pageNo Page number
+     * @param pageSize page size
+     * @param sortBy Sort params
+     * @return ResponseEntity PageResponse PublicationDto
+     */
+    @Operation(summary = "Get a list of paginated/sorted publications", operationId = "getAllPublications")
+    @ApiResponse(responseCode = "200", description = "List of publications retrieved successfully."
+            ,  content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE
+            , schema = @Schema(implementation = PageResponsePublicationDto.class))})
+    @GetMapping("/allPublications")
+    public  ResponseEntity<? extends List<PublicationDto>>  getAllPublications(
+            @RequestParam(defaultValue = "0") int pageNo,
+            @RequestParam(defaultValue = "5") int pageSize,
+            @RequestParam(defaultValue = "publicationId") String sortBy)
+    {
+        List<PublicationDto> list = publicationService.findPaginatedSortedAllPublications(pageNo, pageSize, sortBy);
+
+        return new ResponseEntity<>(list, HttpStatus.OK);
+
     }
 
     /**
